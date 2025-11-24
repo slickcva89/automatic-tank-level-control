@@ -44,17 +44,19 @@ fbPumpControl(
 	sErrorMsg=> , 
 	bSwitch=> bPumpOnOutput, 
 	bOverrideState=> );
-
+	
 IF eMode = E_Mode.Auto THEN
 	stPumpOnAuto.bExecute:= 
 		NOT (tonHighLevelSensorDly.Q OR tonFillTimeout.Q) AND (stPumpOnAuto.bExecute OR tonLowLevelSensorDly.Q);
-END_IF]]></ST>
+END_IF
+
+]]></ST>
     </Implementation>
     <LineIds Name="FB_TankControl">
-      <LineId Id="274" Count="19" />
-      <LineId Id="322" Count="0" />
-      <LineId Id="329" Count="0" />
-      <LineId Id="72" Count="0" />
+      <LineId Id="404" Count="4" />
+      <LineId Id="410" Count="13" />
+      <LineId Id="425" Count="4" />
+      <LineId Id="374" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

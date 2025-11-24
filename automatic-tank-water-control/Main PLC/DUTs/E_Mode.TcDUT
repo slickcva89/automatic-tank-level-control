@@ -2,7 +2,6 @@
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <DUT Name="E_Mode" Id="{8918739d-63e1-4072-bef0-70a592e9b3dd}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
-{attribute 'strict'}
 TYPE E_Mode :
 (
 	Manual, Auto

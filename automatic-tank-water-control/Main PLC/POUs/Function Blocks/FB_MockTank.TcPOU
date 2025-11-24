@@ -34,42 +34,55 @@ END_VAR
 bHighLevel:= rVolume > nHighLevelSensorPos;
 
 tonConsumptionPeriod(IN:= bEnable AND NOT tonConsumptionPeriod.Q, PT:= , Q=> , ET=> );
-tonSamplingRate(IN:= bEnable AND NOT tonSamplingRate.Q, PT:= tSamplingRate, Q=> , ET=> );
+tonSamplingRate(IN:= NOT tonSamplingRate.Q, PT:= tSamplingRate, Q=> , ET=> );
+
 IF bPumpOn THEN
 	rFillRate:= rPumpFillRate;
 ELSE
 	rFillRate:= 0.0;
 END_IF
+rFillRateFactor:= TIME_TO_REAL(tonSamplingRate.PT)/1000;
 
 IF bEnable THEN
-	rFillRateFactor:= TIME_TO_REAL(tonSamplingRate.PT)/1000;
 	IF tonConsumptionPeriod.Q THEN
 		fbRandom(seed:=LREAL_TO_INT(fbRandom.Num));
 		IF rConsumption = 0.0 THEN
-			rConsumption:= fbRandom.Num*fbRandom.Num*20;
+			rConsumption:= LREAL_TO_REAL(fbRandom.Num*rPumpFillRate/2);
 			tonConsumptionPeriod.PT:= LREAL_TO_TIME(fbRandom.Num*10000);
 		ELSE
 			rConsumption:= 0.0;
 			tonConsumptionPeriod.PT:= LREAL_TO_TIME(fbRandom.Num*2000);
 		END_IF
 	END_IF
-	IF rVolume < 0.1 THEN
-		rConsumption:= 0.0;
-	END_IF
-	IF tonSamplingRate.Q THEN
-		rVolume:= rVolume + (rFillRate - rConsumption)*rFillRateFactor;
-	END_IF
+ELSE
+	rConsumption:= 0.0;
+END_IF
+
+IF rVolume < 0.0 THEN
+	rVolume:= 0.0;
+	rConsumption:= 0.0;
+END_IF
+IF tonSamplingRate.Q THEN
+	rVolume:= rVolume + (rFillRate - rConsumption)*rFillRateFactor;
 END_IF]]></ST>
     </Implementation>
     <LineIds Name="FB_MockTank">
-      <LineId Id="332" Count="11" />
-      <LineId Id="345" Count="1" />
+      <LineId Id="332" Count="4" />
+      <LineId Id="377" Count="0" />
+      <LineId Id="337" Count="5" />
+      <LineId Id="376" Count="0" />
+      <LineId Id="343" Count="0" />
+      <LineId Id="346" Count="0" />
       <LineId Id="365" Count="0" />
       <LineId Id="348" Count="1" />
       <LineId Id="363" Count="0" />
       <LineId Id="350" Count="1" />
       <LineId Id="364" Count="0" />
-      <LineId Id="352" Count="8" />
+      <LineId Id="352" Count="1" />
+      <LineId Id="378" Count="1" />
+      <LineId Id="360" Count="0" />
+      <LineId Id="368" Count="6" />
+      <LineId Id="367" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

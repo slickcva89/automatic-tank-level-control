@@ -30,7 +30,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{4818468A-AB96-4C26-B5B8-115D2D5F7F73}" Name="Main PLC" PrjFilePath="Main PLC\Main PLC.plcproj" TmcFilePath="Main PLC\Main PLC.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" CopyTmcToTarget="true" CopyTpyToTarget="false" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="Main PLC\Main PLC.tmc" TmcHash="{AEA79414-D745-5830-2388-2D7930721AE5}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="Main PLC\Main PLC.tmc" TmcHash="{5A666C08-5D36-15D1-FB1A-713FDB96CD92}">
 					<Name>Main PLC Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="1">

@@ -6,41 +6,20 @@ VAR
 	fbTankControl: FB_TankControl;
 	fbMockTank: FB_MockTank;
 	
-	{attribute 'OPC.UA.DA' := '1'}
-	stTankPumpCtrl: ST_HmiControl;
-	
-	{attribute 'OPC.UA.DA' := '1'}
-	bHmiReset: BOOL;
-	
-	{attribute 'OPC.UA.DA' := '1'}
-	eHmiMode: E_Mode;
-	
-	{attribute 'OPC.UA.DA':='1'}
-	{attribute 'OPC.UA.DA.Access':='1'}
-	rTankVolume: REAL;
-	
-	{attribute 'OPC.UA.DA':='1'}
-	{attribute 'OPC.UA.DA.Access':='1'}
-	rConsumptionRate: REAL;
-	
-	{attribute 'OPC.UA.DA':='1'}
-	{attribute 'OPC.UA.DA.Access':='1'}
-	nAlarmBits: DWORD;
-	
 	nLiveAlarmBits: DWORD;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[fbMockTank(
-	bEnable:= fbMockTank.bEnable, 
+	bEnable:= gHMI.bEnableSimulation, 
 	bPumpOn:= Q[0], 
 	rPumpFillRate:= fbMockTank.rPumpFillRate, 
 	rCapacity:= fbMockTank.rCapacity, 
 	tSamplingRate:= fbMockTank.tSamplingRate,
 	nLowLevelSensorPos:= fbMockTank.nLowLevelSensorPos, 
 	nHighLevelSensorPos:= fbMockTank.nHighLevelSensorPos, 
-	rVolume=> rTankVolume, 
-	rConsumption=> rConsumptionRate, 
+	rVolume=> gHMI.rTankVolume, 
+	rConsumption=> gHMI.rConsumptionRate, 
 	bLowLevel=>, 
 	bHighLevel=> );
 
@@ -51,7 +30,7 @@ END_IF
 
 fbTankControl(
 	bEnableFillTimeout:= fbTankControl.bEnableFillTimeout, 
-	eMode:= eHmiMode, 
+	eMode:= gHMI.nMode, 
 	bReset:= fbTankControl.bReset, 
 	tHighLevelSensorDly:= fbTankControl.tHighLevelSensorDly, 
 	tLowLevelSensorDly:= fbTankControl.tLowLevelSensorDly, 
@@ -59,16 +38,16 @@ fbTankControl(
 	bPumpOnOutput:= Q[0], 
 	bHighLevelSensor:= I[1], 
 	bLowLevelSensor:= I[0], 
-	stPumpHmiControl:= stTankPumpCtrl);
+	stPumpHmiControl:= gHMI.stTankPumpCtrl);
 	
-IF bHmiReset THEN
-	F_Clear(nAlarmBits);
+IF gHMI.bReset THEN
+	F_Clear(gHMI.nAlarmBits);
 END_IF
 
 nLiveAlarmBits.0:= NOT I[0];
 nLiveAlarmBits.1:= I[1];
 
-nAlarmBits:= nAlarmBits OR nLiveAlarmBits;]]></ST>
+gHMI.nAlarmBits:= gHMI.nAlarmBits OR nLiveAlarmBits;]]></ST>
     </Implementation>
     <LineIds Name="MAIN">
       <LineId Id="73" Count="4" />
