@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_StopWatch" Id="{10b17d02-3164-4219-9e87-e977ce578348}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_StopWatch
+VAR_INPUT
+	bStart: BOOL;
+	bReset: BOOL;
+END_VAR
+VAR_IN_OUT
+	tElapsedTime: TIME;
+END_VAR
+VAR
+	tStartTime: TIME;
+	rtReset: R_TRIG;
+	tLastElapsedTime: TIME;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[rtReset(CLK:= bReset);
+IF rtReset.Q THEN
+	F_Clear(tLastElapsedTime);
+	F_Clear(tStartTime);
+END_IF
+
+IF bStart AND tStartTime = T#0MS THEN
+	tStartTime:= TIME();
+ELSIF NOT bStart AND tStartTime > T#0MS THEN
+	tLastElapsedTime:= tLastElapsedTime + TIME() - tStartTime;
+	F_Clear(tStartTime);
+END_IF
+
+IF tStartTime > T#0MS THEN
+	tElapsedTime:= tLastElapsedTime + TIME() - tStartTime;
+ELSIF tLastElapsedTime = T#0S AND tElapsedTime > T#0S THEN
+	tLastElapsedTime:= tElapsedTime;
+ELSE
+	tElapsedTime:= tLastElapsedTime;
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="FB_StopWatch">
+      <LineId Id="81" Count="3" />
+      <LineId Id="79" Count="1" />
+      <LineId Id="47" Count="2" />
+      <LineId Id="64" Count="0" />
+      <LineId Id="50" Count="1" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="61" Count="0" />
+      <LineId Id="98" Count="1" />
+      <LineId Id="62" Count="0" />
+      <LineId Id="60" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,13 +1,91 @@
-<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1">
-  <POU Name="MAIN" Id="{348fe6e9-6011-4b34-91d1-b1598d4d3bc8}">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="MAIN" Id="{348fe6e9-6011-4b34-91d1-b1598d4d3bc8}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
+	fbTankControl: FB_TankControl;
+	fbMockTank: FB_MockTank;
+	
+	{attribute 'OPC.UA.DA' := '1'}
+	stTankPumpCtrl: ST_HmiControl;
+	
+	{attribute 'OPC.UA.DA' := '1'}
+	bHmiReset: BOOL;
+	
+	{attribute 'OPC.UA.DA' := '1'}
+	eHmiMode: E_Mode;
+	
+	{attribute 'OPC.UA.DA':='1'}
+	{attribute 'OPC.UA.DA.Access':='1'}
+	rTankVolume: REAL;
+	
+	{attribute 'OPC.UA.DA':='1'}
+	{attribute 'OPC.UA.DA.Access':='1'}
+	rConsumptionRate: REAL;
+	
+	{attribute 'OPC.UA.DA':='1'}
+	{attribute 'OPC.UA.DA.Access':='1'}
+	nAlarmBits: DWORD;
+	
+	nLiveAlarmBits: DWORD;
 END_VAR
-]]>
-    </Declaration>
+]]></Declaration>
     <Implementation>
-      <ST><![CDATA[]]></ST>
+      <ST><![CDATA[fbMockTank(
+	bEnable:= fbMockTank.bEnable, 
+	bPumpOn:= Q[0], 
+	rPumpFillRate:= fbMockTank.rPumpFillRate, 
+	rCapacity:= fbMockTank.rCapacity, 
+	tSamplingRate:= fbMockTank.tSamplingRate,
+	nLowLevelSensorPos:= fbMockTank.nLowLevelSensorPos, 
+	nHighLevelSensorPos:= fbMockTank.nHighLevelSensorPos, 
+	rVolume=> rTankVolume, 
+	rConsumption=> rConsumptionRate, 
+	bLowLevel=>, 
+	bHighLevel=> );
+
+IF fbMockTank.bEnable THEN	
+	I[0]:= fbMockTank.bLowLevel;
+	I[1]:= fbMockTank.bHighLevel;
+END_IF
+
+fbTankControl(
+	bEnableFillTimeout:= fbTankControl.bEnableFillTimeout, 
+	eMode:= eHmiMode, 
+	bReset:= fbTankControl.bReset, 
+	tHighLevelSensorDly:= fbTankControl.tHighLevelSensorDly, 
+	tLowLevelSensorDly:= fbTankControl.tLowLevelSensorDly, 
+	tFillTimeout:= fbTankControl.tFillTimeout, 
+	bPumpOnOutput:= Q[0], 
+	bHighLevelSensor:= I[1], 
+	bLowLevelSensor:= I[0], 
+	stPumpHmiControl:= stTankPumpCtrl);
+	
+IF bHmiReset THEN
+	F_Clear(nAlarmBits);
+END_IF
+
+nLiveAlarmBits.0:= NOT I[0];
+nLiveAlarmBits.1:= I[1];
+
+nAlarmBits:= nAlarmBits OR nLiveAlarmBits;]]></ST>
     </Implementation>
+    <LineIds Name="MAIN">
+      <LineId Id="73" Count="4" />
+      <LineId Id="89" Count="0" />
+      <LineId Id="78" Count="5" />
+      <LineId Id="86" Count="0" />
+      <LineId Id="84" Count="1" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="87" Count="0" />
+      <LineId Id="72" Count="0" />
+      <LineId Id="36" Count="10" />
+      <LineId Id="100" Count="3" />
+      <LineId Id="107" Count="0" />
+      <LineId Id="106" Count="0" />
+      <LineId Id="108" Count="0" />
+      <LineId Id="110" Count="0" />
+      <LineId Id="109" Count="0" />
+    </LineIds>
   </POU>
 </TcPlcObject>

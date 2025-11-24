@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="F_Clear" Id="{8f6b6663-3989-4b1f-bcad-6655ca3dce55}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_Clear : BOOL //size of data type should not exceed double integer maximum value
+VAR_INPUT
+	Target: ANY;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[MemSet(
+	DestAddr       	:= Target.pValue, 
+    FillByte    	:= 0, 
+    n   			:= DINT_TO_UDINT(Target.diSize)
+);]]></ST>
+    </Implementation>
+    <LineIds Name="F_Clear">
+      <LineId Id="11" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="13" Count="1" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

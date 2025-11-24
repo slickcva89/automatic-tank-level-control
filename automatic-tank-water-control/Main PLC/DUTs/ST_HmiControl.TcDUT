@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ST_HmiControl" Id="{feb8c749-869b-48fd-8d6f-24e2e8f0414b}">
+    <Declaration><![CDATA[TYPE ST_HmiControl :
+STRUCT
+	Lamp: WORD;
+	Button: WORD;
+	Interlock: WORD;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

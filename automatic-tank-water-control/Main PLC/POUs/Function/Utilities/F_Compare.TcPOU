@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="F_Compare" Id="{9c2c226b-4203-48c9-ad02-3d1988eea2a2}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_Compare : BOOL
+VAR_INPUT
+	Var1: ANY;
+	Var2: ANY;
+END_VAR
+VAR
+	nDiff: DINT:= -1; 
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF Var1.diSize = Var2.diSize THEN
+	nDiff:= MEMCMP(
+			pBuf1:= Var1.pValue, 
+			pBuf2:= Var2.pValue, 
+			n:= DINT_TO_UDINT(Var2.diSize));
+END_IF
+
+F_Compare:= nDiff = 0;]]></ST>
+    </Implementation>
+    <LineIds Name="F_Compare">
+      <LineId Id="59" Count="6" />
+      <LineId Id="26" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

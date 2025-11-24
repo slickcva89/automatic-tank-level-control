@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_SwitchSingleThrow" Id="{3b1ff8dd-ce0c-4fee-a754-f78db14ac915}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_SwitchSingleThrow
+VAR_INPUT
+	bManualMode: BOOL;
+	bReset: BOOL;
+	bSensor: BOOL;
+	bInterlock: BOOL;
+	tTimeout: TIME:= tDefaultTimeOut;
+	tMinSensorOn: TIME:= tDefaultMinSensorOn;
+END_VAR
+VAR_IN_OUT
+	stAuto: ST_AutoControlSwitch;
+	stHmiControl: ST_HmiControl;
+END_VAR
+VAR_OUTPUT
+	bError: BOOL;
+	sErrorMsg: STRING(100);
+	bSwitch: BOOL;
+	
+	bOverrideState: BOOL;
+END_VAR
+VAR
+	tonPulse_Delay: Ton;
+	tonSeqDelay: Ton;
+	tonSeqTimeout: Ton;	
+	
+	rtReset: R_TRIG;
+	
+	nCurrentState: BYTE;
+	nAutoState: BYTE;
+	
+	rtHome_Execute_HMI: R_TRIG;
+	rtAction_Execute_HMI: R_TRIG;
+	
+	ton_DoneResetTimeout: TON;
+	
+	_bSwitch: BOOL;
+END_VAR
+VAR CONSTANT
+	tDefaultMinPulseOn: TIME:= T#2S;
+	tDefaultMinSensorOn: TIME:= T#0.1S;
+	tDefaultTimeOut: TIME:= T#10S;
+	tDefaultResetDone: TIME:= T#1S;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[tonSeqDelay(
+	IN:= bSensor,
+	PT:= tMinSensorOn);
+	
+tonSeqTimeout(
+	IN:= stAuto.bExecute AND NOT (stAuto.bDone OR stAuto.bError OR bManualMode),
+	PT:= tTimeout);
+	
+ton_DoneResetTimeout(
+	IN:= stAuto.bDone AND NOT bSensor,
+	PT:= tDefaultResetDone);
+	
+IF ton_DoneResetTimeout.Q THEN
+	F_Clear(stAuto.bDone);
+END_IF
+	
+rtReset(CLK:= bReset);
+
+bError:= stAuto.bError;
+
+rtHome_Execute_HMI(CLK:= stHmiControl.Button.0);
+rtAction_Execute_HMI(CLK:= stHmiControl.Button.1);
+
+IF rtReset.Q AND bError THEN	
+	stAuto.bError:= FALSE;
+	sErrorMsg:= '';
+END_IF
+
+IF tonPulse_Delay.Q THEN
+	F_Clear(stHmiControl);
+	F_Clear(stAuto.bExecute);
+	F_Clear(_bSwitch);
+END_IF
+IF bManualMode THEN
+	IF rtHome_Execute_HMI.Q THEN
+		stHmiControl.Button.1:= FALSE;
+		_bSwitch:= FALSE;
+	ELSIF rtAction_Execute_HMI.Q THEN
+		IF bInterlock THEN
+			stHmiControl.Button.1:= FALSE;
+		ELSE
+			stHmiControl.Button.0:= FALSE;
+			_bSwitch:= TRUE;
+		END_IF
+	END_IF
+	stAuto.bExecute:= stHmiControl.Button.1;
+ELSE 
+	IF NOT (bError AND stAuto.bExecute) THEN
+		IF stAuto.bExecute THEN
+			IF NOT bInterlock THEN
+				_bSwitch:= TRUE;
+			END_IF
+		ELSE
+			_bSwitch:= FALSE;
+		END_IF
+		IF tonSeqTimeout.Q THEN
+			stAuto.bError:= TRUE;
+			IF bInterlock THEN
+				sErrorMsg:= 'Interlock Error';
+			ELSE 
+				sErrorMsg:= 'Timeout Error';
+			END_IF
+		END_IF
+	END_IF
+	stHmiControl.Button.1:= stAuto.bExecute;
+	stHmiControl.Button.0:= NOT stAuto.bExecute;
+END_IF
+
+stHmiControl.Interlock.1:= bInterlock;
+stAuto.bDone:= stAuto.bExecute AND (tonSeqDelay.Q OR stAuto.bDone) AND NOT stAuto.bError;
+
+nCurrentState.0:= bSwitch;
+IF NOT bManualMode THEN
+	nAutoState:= nCurrentState;
+END_IF
+bOverrideState:= nCurrentState <> nAutoState;
+
+bSwitch:= _bSwitch;
+
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="FB_SwitchSingleThrow">
+      <LineId Id="2529" Count="21" />
+      <LineId Id="2552" Count="4" />
+      <LineId Id="2704" Count="1" />
+      <LineId Id="2721" Count="0" />
+      <LineId Id="2717" Count="0" />
+      <LineId Id="2719" Count="0" />
+      <LineId Id="2557" Count="34" />
+      <LineId Id="2593" Count="8" />
+      <LineId Id="2864" Count="0" />
+      <LineId Id="2863" Count="0" />
+      <LineId Id="2602" Count="1" />
+      <LineId Id="116" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

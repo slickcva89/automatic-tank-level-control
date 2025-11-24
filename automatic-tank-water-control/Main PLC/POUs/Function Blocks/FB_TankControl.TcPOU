@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_TankControl" Id="{db8b8172-4174-444e-a1da-5c3b4a70a4f2}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_TankControl
+VAR_INPUT
+	bEnableFillTimeout: BOOL;
+	eMode: E_Mode;
+	bReset: BOOL;
+	tHighLevelSensorDly: TIME:= T#0.2S;
+	tLowLevelSensorDly: TIME:= T#0.2S;
+	tFillTimeout: TIME:= T#10S;
+END_VAR
+VAR_IN_OUT
+	bPumpOnOutput: BOOL;
+	bHighLevelSensor: BOOL;
+	bLowLevelSensor: BOOL;
+	stPumpHmiControl: ST_HmiControl;
+END_VAR
+VAR
+	tonHighLevelSensorDly: TON;
+	tonLowLevelSensorDly: TON;
+	tonFillTimeout: TON;
+	
+	stPumpOnAuto: ST_AutoControlSwitch;
+	fbPumpControl: FB_SwitchSingleThrow;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[tonHighLevelSensorDly(IN:= bHighLevelSensor, PT:= tHighLevelSensorDly, Q=> , ET=> );
+tonLowLevelSensorDly(IN:= NOT bLowLevelSensor, PT:= tLowLevelSensorDly, Q=> , ET=> );
+
+tonFillTimeout(IN:= bEnableFillTimeout, PT:= tFillTimeout, Q=> , ET=> );
+
+fbPumpControl(
+	bManualMode:= eMode = E_Mode.Manual, 
+	bReset:= bReset,  
+	bSensor:= TRUE, 
+	bInterlock:= tonHighLevelSensorDly.Q, 
+	tTimeout:= , 
+	tMinSensorOn:= , 
+	stAuto:= stPumpOnAuto, 
+	stHmiControl:= stPumpHmiControl,
+	bError=> , 
+	sErrorMsg=> , 
+	bSwitch=> bPumpOnOutput, 
+	bOverrideState=> );
+
+IF eMode = E_Mode.Auto THEN
+	stPumpOnAuto.bExecute:= 
+		NOT (tonHighLevelSensorDly.Q OR tonFillTimeout.Q) AND (stPumpOnAuto.bExecute OR tonLowLevelSensorDly.Q);
+END_IF]]></ST>
+    </Implementation>
+    <LineIds Name="FB_TankControl">
+      <LineId Id="274" Count="19" />
+      <LineId Id="322" Count="0" />
+      <LineId Id="329" Count="0" />
+      <LineId Id="72" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

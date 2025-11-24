@@ -1,8 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <GVL Name="gvlIO" Id="{b502dacf-f837-4a1a-9176-5415efc890a4}">
+  <DUT Name="E_Mode" Id="{8918739d-63e1-4072-bef0-70a592e9b3dd}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
-VAR_GLOBAL
-END_VAR]]></Declaration>
-  </GVL>
+{attribute 'strict'}
+TYPE E_Mode :
+(
+	Manual, Auto
+)USINT;
+END_TYPE
+]]></Declaration>
+  </DUT>
 </TcPlcObject>

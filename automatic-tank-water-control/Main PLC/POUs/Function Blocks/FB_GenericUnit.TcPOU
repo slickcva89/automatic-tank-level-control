@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_GenericUnit" Id="{95af2d81-bb8a-4668-a95a-43b2e7839b81}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_GenericUnit
+VAR_IN_OUT
+	bPumpOn: BOOL;
+	
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[M_Alarm();
+M_Devices();]]></ST>
+    </Implementation>
+    <LineIds Name="FB_GenericUnit">
+      <LineId Id="9" Count="0" />
+      <LineId Id="20" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

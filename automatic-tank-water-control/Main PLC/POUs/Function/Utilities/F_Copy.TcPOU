@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="F_Copy" Id="{02a7b620-6789-4498-bd8a-1f4b782ca1c5}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_Copy : BOOL //data should of child or parent
+VAR_INPUT
+	Target: ANY;
+	Source: ANY;
+END_VAR
+VAR
+	nSize: UDINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF Target.diSize > Source.diSize THEN
+	nSize:= DINT_TO_UDINT(Source.diSize);
+ELSE
+	nSize:= DINT_TO_UDINT(Target.diSize);
+END_IF
+
+MEMCPY(
+	destAddr		:= Target.pValue,
+	srcAddr			:= Source.pValue,
+	n				:= nSize
+);]]></ST>
+    </Implementation>
+    <LineIds Name="F_Copy">
+      <LineId Id="33" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="43" Count="1" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="20" Count="2" />
+      <LineId Id="29" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
