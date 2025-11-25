@@ -23,10 +23,8 @@ END_VAR
 	bLowLevel=>, 
 	bHighLevel=> );
 
-IF fbMockTank.bEnable THEN	
-	I[0]:= fbMockTank.bLowLevel;
-	I[1]:= fbMockTank.bHighLevel;
-END_IF
+I[0]:= fbMockTank.bLowLevel;
+I[1]:= fbMockTank.bHighLevel;
 
 fbTankControl(
 	bEnableFillTimeout:= fbTankControl.bEnableFillTimeout, 
@@ -53,10 +51,9 @@ gHMI.nAlarmBits:= gHMI.nAlarmBits OR nLiveAlarmBits;]]></ST>
       <LineId Id="73" Count="4" />
       <LineId Id="89" Count="0" />
       <LineId Id="78" Count="5" />
-      <LineId Id="86" Count="0" />
-      <LineId Id="84" Count="1" />
-      <LineId Id="70" Count="0" />
       <LineId Id="87" Count="0" />
+      <LineId Id="119" Count="0" />
+      <LineId Id="118" Count="0" />
       <LineId Id="72" Count="0" />
       <LineId Id="36" Count="10" />
       <LineId Id="100" Count="3" />
